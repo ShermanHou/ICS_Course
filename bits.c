@@ -166,7 +166,10 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+  int a = x & y;//全为1的位
+  int b = ~x & ~y;//全为0的位
+  int c = ~a & ~b;//不全为1
+  return c;
 }
 /* 
  * thirdBits - return word with every third bit (starting from the LSB) set to 1
@@ -175,7 +178,10 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int thirdBits(void) {
-  return 2;
+  int x = 0x49;
+  x = (x<<9) + x;
+  x = (x<<18) + x;
+  return x;
 }
 /* 
  * fitsShort - return 1 if x can be represented as a 
@@ -186,7 +192,9 @@ int thirdBits(void) {
  *   Rating: 1
  */
 int fitsShort(int x) {
-  return 2;
+  int y = (x<<16)>>16;
+  int z = y^x;
+  return !z;
 }
 /*
  * isTmax - returns 1 if x is the maximum, two's complement number,
@@ -196,19 +204,22 @@ int fitsShort(int x) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return 2;
+  int y = x + 1;//<<1 0x7FFFFFFF and 0xFFFFFFFF
+  int z = y + y;
+  return !(z|(!y));
 }
 /* 
  * fitsBits - return 1 if x can be represented as an 
  *  n-bit, two's complement integer.
- *   1 <= n <= 32
+ *   1 <=  n <= 32
  *   Examples: fitsBits(5,3) = 0, fitsBits(-4,3) = 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 15
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  return 2;
+x = x >> (n + ~0);
+	return !x | !(~x);
 }
 /* 
  * upperBits - pads n upper bits with 1's
@@ -219,7 +230,7 @@ int fitsBits(int x, int n) {
  *  Rating: 1
  */
 int upperBits(int n) {
-  return 2;
+    return ((1<<(31))>>((n+~0)))+!n;
 }
 /* 
  * anyOddBit - return 1 if any odd-numbered bit in word set to 1
@@ -229,7 +240,13 @@ int upperBits(int n) {
  *   Rating: 2
  */
 int anyOddBit(int x) {
-    return 2;
+     int mask = 0xAA;
+    mask = mask+(mask<<8);
+    mask = mask+(mask<<16);
+    // int a = (x|mask);
+    // int b = ((x|mask)^mask);
+    return !!((x&mask));
+    // return 2;
 }
 /* 
  * byteSwap - swaps the nth byte and the mth byte
@@ -241,7 +258,13 @@ int anyOddBit(int x) {
  *  Rating: 2
  */
 int byteSwap(int x, int n, int m) {
-    return 2;
+  int y = 0;
+  n = n<<3; // n == n*3
+  m = m<<3; //m == n*3
+  y = 0xff & ((x>>n) ^ (x>>m)); // 1111 1111
+  x = x ^ (y<<n); 
+  x = x ^ (y<<m);
+  return x;
 }
 /* 
  * absVal - absolute value of x
@@ -252,7 +275,8 @@ int byteSwap(int x, int n, int m) {
  *   Rating: 4
  */
 int absVal(int x) {
-  return 2;
+  int c = x>>31;
+  return (x+c)^c;
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
@@ -263,7 +287,9 @@ int absVal(int x) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+     int c = x>>31;
+  int a = ((c & 1) << n) + c;
+  return (x + a) >> n;
 }
 /* 
  * float_neg - Return bit-level equivalent of expression -f for
