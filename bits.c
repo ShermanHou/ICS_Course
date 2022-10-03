@@ -230,7 +230,7 @@ x = x >> (n + ~0);
  *  Rating: 1
  */
 int upperBits(int n) {
-    return ((1<<(31))>>((n+~0)))+!n;
+    return ((1<<(31))>>(n+~0))+!n;
 }
 /* 
  * anyOddBit - return 1 if any odd-numbered bit in word set to 1
@@ -240,13 +240,10 @@ int upperBits(int n) {
  *   Rating: 2
  */
 int anyOddBit(int x) {
-     int mask = 0xAA;
+    int mask = 0xAA;
     mask = mask+(mask<<8);
     mask = mask+(mask<<16);
-    // int a = (x|mask);
-    // int b = ((x|mask)^mask);
     return !!((x&mask));
-    // return 2;
 }
 /* 
  * byteSwap - swaps the nth byte and the mth byte
@@ -259,9 +256,9 @@ int anyOddBit(int x) {
  */
 int byteSwap(int x, int n, int m) {
   int y = 0;
-  n = n<<3; // n == n*3
-  m = m<<3; //m == n*3
-  y = 0xff & ((x>>n) ^ (x>>m)); // 1111 1111
+  n = n<<3;
+  m = m<<3;
+  y = 0xff & ((x>>n) ^ (x>>m));
   x = x ^ (y<<n); 
   x = x ^ (y<<m);
   return x;
@@ -275,8 +272,8 @@ int byteSwap(int x, int n, int m) {
  *   Rating: 4
  */
 int absVal(int x) {
-  int c = x>>31;
-  return (x+c)^c;
+  int mark = x>>31;
+  return (x+mark)^mark;
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
@@ -287,9 +284,10 @@ int absVal(int x) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-     int c = x>>31;
-  int a = ((c & 1) << n) + c;
-  return (x + a) >> n;
+  int mark = x>>31;
+  int add = ((mark & 1) << n) //符号0 1左移
+  + mark;//加0或-1 给负数的x补充2^n-1,实现选择性加1
+  return (x + add) >> n;
 }
 /* 
  * float_neg - Return bit-level equivalent of expression -f for
