@@ -1,0 +1,1 @@
+printf("%x",bitMask(5,3));

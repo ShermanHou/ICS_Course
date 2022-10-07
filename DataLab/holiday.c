@@ -2,5 +2,5 @@
 #include <stdio.h>
 int main()
 {
-    printf("%d",bitXor(1, 2));
+    printf("%x",isGreater(5,0));
 }

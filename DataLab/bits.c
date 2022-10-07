@@ -301,7 +301,13 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+  int maskM = 1;
+  maskM = maskM<<31;
+  int maskE = 0xFF;
+  maskE = (maskE<<22);
+  // if(!((uf^maskE)&maskE) && uf<<9)return uf;
+  if((uf&maskE==maskE))return uf;
+  return uf^maskM;
 }
 /* 
  * logicalNeg - implement the ! operator, using all of 
@@ -312,7 +318,9 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+  int negX = ~x+1;
+  return ((x|negX)>>31)+1;
+  // return 2;
 }
 /* 
  * bitMask - Generate a mask consisting of all 1's 
@@ -325,7 +333,15 @@ int logicalNeg(int x) {
  *   Rating: 3
  */
 int bitMask(int highbit, int lowbit) {
-  return 2;
+  int neg = ~0;
+// int higtLeft = 31+(~(highbit));
+  // int h = 1<<31;
+  // int high = h>>higtLeft;
+  // int low = 1<<lowbit;
+  //  return ~(high|low);
+  int h = ~(neg<<(highbit+1));
+  int ans = (h>>lowbit)<<lowbit;
+  return ans;
 }
 /* 
  * isGreater - if x > y  then return 1, else return 0 
@@ -335,7 +351,24 @@ int bitMask(int highbit, int lowbit) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;
+  // // int dif = x + ~y+1;
+  // int negX = ~x+1;
+  // int diff = y + negX;
+  // // int ans = !(((dif>>31))|(!dif));
+  // int ans = ((((diff>>31))|(!diff)))&!!(x^(1<<31));
+  // return ans;
+  //  int negX = ~x+1;
+  // int diff = y + negX;
+  // // int ans = !(((dif>>31))|(!dif));
+  // int ans = ((((diff>>31))|(!diff)))^!(x^(1<<31));
+  // return ans;
+
+  // int dif = x + ~y+1;
+  // int ans = !(((dif>>31))|(!dif));
+  // int k = x+y;
+  // return ans^k;
+  
+
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -346,7 +379,10 @@ int isGreater(int x, int y) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+    int aShift = x>>n;
+  int sign = x>>31;
+  int mask = sign<<31>>(n+~0);
+  return aShift^mask;
 }
 /*
  * satMul2 - multiplies by 2, saturating to Tmin or Tmax if overflow
