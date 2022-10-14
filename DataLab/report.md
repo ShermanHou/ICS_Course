@@ -1,5 +1,7 @@
 # DataLab report
+
 ## all pass!(22/22)
+
 ![pass](/datalabscore.png)
 
 ## Problem1 bitXor
@@ -315,8 +317,10 @@ int satMul2(int x) {
   return (brush_x2) ^ (flow & (tmin ^ (xneg)));
 }
 ```
+
 他山之石 as following...
 改进方法1 :
+
 ```c
 int satMul2(int x) {
   int x2 = x<<1;
@@ -327,7 +331,9 @@ int satMul2(int x) {
   return res;
 }
 ```
+
 改进方法2:
+
 ```c
 int satMul2(int x)
 {
@@ -388,6 +394,36 @@ int trueThreeFourths(int x)
   int left = (rem3 + (xneg & 0x3)) >> 2;
 
   return xmul3div4 + left;
+}
+```
+
+他山之石：
+
+9op
+
+way1
+```c
+int trueThreeFourths(int x)
+{
+ 	int mod=x&0x3;
+	int t=x>>2;
+	int s=x>>1;
+	int sign=x>>31;
+	return t+s+((mod+1)>>(sign+2));
+}
+```
+way2
+```c
+int trueThreeFourths(int x)
+{
+    int sign=x>>31; //符号位
+    int flag=3^sign&3; //负数为0，正数为3
+    flag = flag&x;//判断正数情况下x是否被4整除 
+    flag = !flag;//负数和被4整除的x都得补1
+    int a = x>>2; //(1/4)*x
+    x=x+(~a);//(x-(1/4)*x)-1 多减了1！
+    x=x+flag;//判断是否要补充多减去的1 
+    return x;
 }
 ```
 
@@ -463,37 +499,40 @@ unsigned float_i2f(int x)
   return sign + (absx >> 9) + ((shift) << 23) + bias;
 }
 ```
+
 他山之石 15op...
+
 ```c
 unsigned float_i2f(int x)
 {
 unsigned ux = x;
-	unsigned signexp = 0x4E800000;
-	int flag = 0;
-	int round = 0;
-	if (x) {
-		while (1) {
-			if (ux & 0x80000000) {
-				if (flag)
-					break;
-				else {
-					ux = -x;
-					signexp = 0xCE800000;
-				}
-			} else {
-				ux <<= 1;
-				signexp -= 0x800000;
-			}
-			flag = 1;
-		}
-		if (ux & 0x80)
-			if (ux & 0x17F)
-				round = 1;
-		return signexp + (ux >> 8) + round;
-	}
-	return 0;
+    unsigned signexp = 0x4E800000;
+    int flag = 0;
+    int round = 0;
+    if (x) {
+        while (1) {
+            if (ux & 0x80000000) {
+                if (flag)
+                    break;
+                else {
+                    ux = -x;
+                    signexp = 0xCE800000;
+                }
+            } else {
+                ux <<= 1;
+                signexp -= 0x800000;
+            }
+            flag = 1;
+        }
+        if (ux & 0x80)
+            if (ux & 0x17F)
+                round = 1;
+        return signexp + (ux >> 8) + round;
+    }
+    return 0;
 }
 ```
+
 ## Problem21 howManyBits
 
 要给出确切数值，故考虑采用二分法逼近。
@@ -509,6 +548,7 @@ unsigned ux = x;
 对左右半段的选择通过每次二分对n的选择性加半段的位数来实现。
 
 过程中，n的含义可以说是最左边非0位的当前已知最小位置。
+
 ```c
  int howManyBits(int x)
   {
@@ -536,7 +576,9 @@ unsigned ux = x;
     return n;
   }
 ```
+
 另一种方法:x<<1而后^原来的x从而固定最左边为1的是符号位，以此更好更精简地合并正负数
+
 ```c
 int howManyBits(int x)
 {
@@ -554,6 +596,7 @@ int howManyBits(int x)
   return b16 + b8 + b4 + b2 + b1;
 }
 ```
+
 他山之石
 再改进：
 `b2 = ((!!(x >> 2)) << 1) + 1;`一行中的b2要么为1要么为3，^3可再省略一个操作符，
@@ -561,35 +604,38 @@ int howManyBits(int x)
 
 else
 26op solution:
+
 ```c
 int howManyBits(int x) {
-	int t = x ^ (x << 1);
-	int sum = 31;
-	int temp;
-	temp = !(t >> 16) << 4;//! ^ rather than !! +
-	sum ^= temp; t <<= temp; 
-	temp = !(t >> 24) << 3;
-	sum ^= temp; t <<= temp; 
-	temp = !(t >> 28) << 2;
-	sum ^= temp; t <<= temp;
-	temp = !(t >> 30) << 1;
-	sum ^= temp; t <<= temp;
-	sum ^= !(t >> 31);
-	return sum + 1;
+    int t = x ^ (x << 1);
+    int sum = 31;
+    int temp;
+    temp = !(t >> 16) << 4;//! ^ rather than !! +
+    sum ^= temp; t <<= temp; 
+    temp = !(t >> 24) << 3;
+    sum ^= temp; t <<= temp; 
+    temp = !(t >> 28) << 2;
+    sum ^= temp; t <<= temp;
+    temp = !(t >> 30) << 1;
+    sum ^= temp; t <<= temp;
+    sum ^= !(t >> 31);
+    return sum + 1;
 }
 ```
+
 22op solution...
+
 ```c
 int howManyBits(int x) {
-	// int ans;
-	// x = x ^ (x << 1);
-	// ans = (!(x >> 16)) << 4;
-	// ans ^= 24;
-	// ans ^= (!(x >> ans)) << 3;
-	// ans ^= 4;
-	// ans ^= (!(x >> ans)) << 2;
-	// ans += ((~0x5B) >> ((x >> ans) & 30)) & 3;
-	// return ans + 1;
+    // int ans;
+    // x = x ^ (x << 1);
+    // ans = (!(x >> 16)) << 4;
+    // ans ^= 24;
+    // ans ^= (!(x >> ans)) << 3;
+    // ans ^= 4;
+    // ans ^= (!(x >> ans)) << 2;
+    // ans += ((~0x5B) >> ((x >> ans) & 30)) & 3;
+    // return ans + 1;
   int sign = x >> 0x1F;
   int ans = 0x1F, cur;
   x ^= sign;
@@ -612,10 +658,12 @@ int howManyBits(int x) {
 ```
 
 ## Problem22 float_half
+
 首先记录uf的指数位，并获得uf的绝对值；
 
 而后判断是否为>=NaN的特殊数，是否为非规范数。
 最后，对于规范数，右移1位并加round实现向偶数取整的除2。
+
 ```c
 unsigned float_half(unsigned uf)
 {
@@ -643,20 +691,22 @@ unsigned float_half(unsigned uf)
   return sign + (absuf >> shift) + add;
 }
 ```
+
 另外的写法：
+
 ```c
 unsigned float_half(unsigned uf) {
-	int round=!((uf & 3) ^ 3);
-	int temp=uf&0x7fffffff;
-	int d=uf&0x7f800000;
-	if(d<=0x800000)
-	{
-		int p=temp>>1;
-		return p+(uf&0x80000000)+round;
-	}
-	if(temp>=0x7f800000)
-		return uf;
-	uf=uf-0x800000;
-	return uf;
+    int round=!((uf & 3) ^ 3);
+    int temp=uf&0x7fffffff;
+    int d=uf&0x7f800000;
+    if(d<=0x800000)
+    {
+        int p=temp>>1;
+        return p+(uf&0x80000000)+round;
+    }
+    if(temp>=0x7f800000)
+        return uf;
+    uf=uf-0x800000;
+    return uf;
 }
 ```
