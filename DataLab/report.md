@@ -222,7 +222,7 @@ int logicalNeg(int x) {
 
 ## Problem13 bitMask
 
-所求mask可溯源拆分为两个mask作用后的结果：因为有high和low的规定顺序，我们需要一种错位:用lowbit左移~0来创造高位为1低位为0的highmask；相似地，我们也想用highbit来创造低位为1，高位为0的lowmask,如何做呢？对~0加“只有特定位置上为1的数”即可实现。
+所求mask可溯源拆分为两个mask作用后的结果：因为有high和low的规定顺序，我们需要一种错位:用lowbit左移`~0`来创造高位为1低位为0的highmask；相似地，我们也想用highbit来创造低位为1，高位为0的lowmask,如何做呢？对`~0`加“只有特定位置上为1的数”即可实现。
 
 ```c
 int bitMask(int highbit, int lowbit) {
@@ -255,11 +255,11 @@ int bitMask(int highbit, int lowbit) {
 ```
 
 另一种方法：
-通过对x+~y>=0中的y的改动，将对x和y异号的判断合并进去，
+通过对`x+~y>=0`中的y的改动，将对x和y异号的判断合并进去，
 
 - 异号且x符号位扩展为-1,加1，return0
 
-- 非异号，因为|, 不会对y产生影响；x+~y的符号位再加1,return 1
+- 非异号，因为|, 不会对y产生影响；`x+~y`的符号位再加1,return 1
 
 这样符号位拓展结果和+1连用可以把结果限制在1或0中。
 
@@ -559,6 +559,8 @@ int howManyBits(int x)
 再改进：
 `b2 = ((!!(x >> 2)) << 1) + 1;`一行中的b2要么为1要么为3，^3可再省略一个操作符，
 变为`b2 = (!(x >> 2) << 1) ^ 3;`
+
+else
 26op solution:
 ```c
 int howManyBits(int x) {
