@@ -1,7 +1,6 @@
 # DataLab report
-<!-- ## 通过及得分情况
+## all pass!(22/22)
 ![pass](/datalabscore.png)
-![score](/datalabscore2.png) -->
 
 ## Problem1 bitXor
 
