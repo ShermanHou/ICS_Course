@@ -1,8 +1,8 @@
-/* 
- * CS:APP Data Lab 
- * 
+/*
+ * CS:APP Data Lab
+ *
  * <Please put your name and userid here>
- * 
+ *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -10,7 +10,7 @@
  * compiler. You can still use printf for debugging without including
  * <stdio.h>, although you might get a compiler warning. In general,
  * it's not good practice to ignore compiler warnings, but in this
- * case it's OK.  
+ * case it's OK.
  */
 
 #if 0
@@ -129,7 +129,6 @@ NOTES:
  *      the correct answers.
  */
 
-
 #endif
 /* Copyright (C) 1991-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
@@ -158,58 +157,61 @@ NOTES:
 /* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
    Unicode 6.0.  */
 /* We do not support C11 <threads.h>.  */
-/* 
- * bitXor - x^y using only ~ and & 
+/*
+ * bitXor - x^y using only ~ and &
  *   Example: bitXor(4, 5) = 1
  *   Legal ops: ~ &
  *   Max ops: 14
  *   Rating: 1
  */
-int bitXor(int x, int y) {
-  int a = x & y;//全为1的位
-  int b = ~x & ~y;//全为0的位
-  int c = ~a & ~b;//不全为1
-  return c;
+int bitXor(int x, int y)
+{
+  int a = x & y;   //全为1的位
+  int b = ~x & ~y; //全为0的位
+  return ~a & ~b;  //不全为1
 }
-/* 
+/*
  * thirdBits - return word with every third bit (starting from the LSB) set to 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 8
  *   Rating: 1
  */
-int thirdBits(void) {
+int thirdBits(void)
+{
   int x = 0x49;
-  x = (x<<9) + x;
-  x = (x<<18) + x;
+  x = (x << 9) + x;
+  x = (x << 18) + x;
   return x;
 }
-/* 
- * fitsShort - return 1 if x can be represented as a 
+/*
+ * fitsShort - return 1 if x can be represented as a
  *   16-bit, two's complement integer.
  *   Examples: fitsShort(33000) = 0, fitsShort(-32768) = 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 8
  *   Rating: 1
  */
-int fitsShort(int x) {
-  int y = (x<<16)>>16;
-  int z = y^x;
+int fitsShort(int x)
+{
+  int y = (x << 16) >> 16;
+  int z = y ^ x;
   return !z;
 }
 /*
  * isTmax - returns 1 if x is the maximum, two's complement number,
- *     and 0 otherwise 
+ *     and 0 otherwise
  *   Legal ops: ! ~ & ^ | +
  *   Max ops: 10
  *   Rating: 1
  */
-int isTmax(int x) {
-  int y = x + 1;//<<1 0x7FFFFFFF and 0xFFFFFFFF
+int isTmax(int x)
+{
+  int y = x + 1;
   int z = y + y;
-  return !(z|(!y));
+  return !(z | (!y));
 }
-/* 
- * fitsBits - return 1 if x can be represented as an 
+/*
+ * fitsBits - return 1 if x can be represented as an
  *  n-bit, two's complement integer.
  *   1 <=  n <= 32
  *   Examples: fitsBits(5,3) = 0, fitsBits(-4,3) = 1
@@ -217,11 +219,16 @@ int isTmax(int x) {
  *   Max ops: 15
  *   Rating: 2
  */
-int fitsBits(int x, int n) {
-x = x >> (n + ~0);
-	return !x | !(~x);
+int fitsBits(int x, int n)
+{
+  //  int m = 33 + ~n;
+  // int nbitX = (x << m) >> m;
+  // return !(x^nbitX);
+  int m = 31 + n;
+  int highbits = x >> m;
+  return !((highbits >> n) ^ highbits);
 }
-/* 
+/*
  * upperBits - pads n upper bits with 1's
  *  You may assume 0 <= n <= 32
  *  Example: upperBits(4) = 0xF0000000
@@ -229,23 +236,27 @@ x = x >> (n + ~0);
  *  Max ops: 10
  *  Rating: 1
  */
-int upperBits(int n) {
-    return ((1<<(31))>>(n+~0))+!n;
+int upperBits(int n)
+{
+  int one = (!!n) << 31;
+  return one >> (31 + n);
 }
-/* 
+
+/*
  * anyOddBit - return 1 if any odd-numbered bit in word set to 1
  *   Examples anyOddBit(0x5) = 0, anyOddBit(0x7) = 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 12
  *   Rating: 2
  */
-int anyOddBit(int x) {
-    int mask = 0xAA;
-    mask = mask+(mask<<8);
-    mask = mask+(mask<<16);
-    return !!((x&mask));
+int anyOddBit(int x)
+{
+  int mask = 0xAA;
+  mask = mask + (mask << 8);
+  mask = mask + (mask << 16);
+  return !!((x & mask));
 }
-/* 
+/*
  * byteSwap - swaps the nth byte and the mth byte
  *  Examples: byteSwap(0x12345678, 1, 3) = 0x56341278
  *            byteSwap(0xDEADBEEF, 0, 2) = 0xDEEFBEAD
@@ -254,16 +265,17 @@ int anyOddBit(int x) {
  *  Max ops: 25
  *  Rating: 2
  */
-int byteSwap(int x, int n, int m) {
+int byteSwap(int x, int n, int m)
+{
   int y = 0;
-  n = n<<3;
-  m = m<<3;
-  y = 0xff & ((x>>n) ^ (x>>m));
-  x = x ^ (y<<n); 
-  x = x ^ (y<<m);
+  n = n << 3;
+  m = m << 3;
+  y = 0xff & ((x >> n) ^ (x >> m));
+  x = x ^ (y << n);
+  x = x ^ (y << m);
   return x;
 }
-/* 
+/*
  * absVal - absolute value of x
  *   Example: absVal(-1) = 1.
  *   You may assume -TMax <= x <= TMax
@@ -271,11 +283,12 @@ int byteSwap(int x, int n, int m) {
  *   Max ops: 10
  *   Rating: 4
  */
-int absVal(int x) {
-  int mark = x>>31;
-  return (x+mark)^mark;
+int absVal(int x)
+{
+  int mark = x >> 31;
+  return (x + mark) ^ mark;
 }
-/* 
+/*
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
  *  Round toward zero
  *   Examples: divpwr2(15,1) = 7, divpwr2(-33,4) = -2
@@ -283,13 +296,13 @@ int absVal(int x) {
  *   Max ops: 15
  *   Rating: 2
  */
-int divpwr2(int x, int n) {
-  int mark = x>>31;
-  int add = ((mark & 1) << n) //符号0 1左移
-  + mark;//加0或-1 给负数的x补充2^n-1,实现选择性加1
+int divpwr2(int x, int n)
+{
+  int mark = x >> 31;
+  int add = mark ^ (mark << n); //符号0 1左移;//加0或-1 给负数的x补充2^n-1,实现选择性加1
   return (x + add) >> n;
 }
-/* 
+/*
  * float_neg - Return bit-level equivalent of expression -f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -300,30 +313,27 @@ int divpwr2(int x, int n) {
  *   Max ops: 10
  *   Rating: 2
  */
-unsigned float_neg(unsigned uf) {
-  int maskM = 1;
-  maskM = maskM<<31;
-  int maskE = 0xFF;
-  maskE = (maskE<<22);
-  // if(!((uf^maskE)&maskE) && uf<<9)return uf;
-  if((uf&maskE==maskE))return uf;
-  return uf^maskM;
+unsigned float_neg(unsigned uf)
+{
+  if ((uf << 1) > 0xFF000000)
+    return uf;
+  return uf ^ 0x80000000;
 }
-/* 
- * logicalNeg - implement the ! operator, using all of 
+/*
+ * logicalNeg - implement the ! operator, using all of
  *              the legal operators except !
  *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
  *   Legal ops: ~ & ^ | + << >>
  *   Max ops: 12
- *   Rating: 4 
+ *   Rating: 4
  */
-int logicalNeg(int x) {
-  int negX = ~x+1;
-  return ((x|negX)>>31)+1;
-  // return 2;
+int logicalNeg(int x)
+{
+  int negX = ~x + 1;
+  return ((x | negX) >> 31) + 1;
 }
-/* 
- * bitMask - Generate a mask consisting of all 1's 
+/*
+ * bitMask - Generate a mask consisting of all 1's
  *   lowbit and highbit
  *   Examples: bitMask(5,3) = 0x38
  *   Assume 0 <= lowbit <= 31, and 0 <= highbit <= 31
@@ -332,57 +342,44 @@ int logicalNeg(int x) {
  *   Max ops: 16
  *   Rating: 3
  */
-int bitMask(int highbit, int lowbit) {
-  int neg = ~0;
-// int higtLeft = 31+(~(highbit));
-  // int h = 1<<31;
-  // int high = h>>higtLeft;
-  // int low = 1<<lowbit;
-  //  return ~(high|low);
-  int h = ~(neg<<(highbit+1));
-  int ans = (h>>lowbit)<<lowbit;
-  return ans;
+int bitMask(int highbit, int lowbit)
+{
+  int all1 = ~0;
+  int highMask = all1 << lowbit;
+  int lowMask = ((2 << highbit) + all1);
+  return highMask & lowMask;
 }
-/* 
- * isGreater - if x > y  then return 1, else return 0 
+/*
+ * isGreater - if x > y  then return 1, else return 0
  *   Example: isGreater(4,5) = 0, isGreater(5,4) = 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 24
  *   Rating: 3
  */
-int isGreater(int x, int y) {
-  // // int dif = x + ~y+1;
-  // int negX = ~x+1;
-  // int diff = y + negX;
-  // // int ans = !(((dif>>31))|(!dif));
-  // int ans = ((((diff>>31))|(!diff)))&!!(x^(1<<31));
-  // return ans;
-  //  int negX = ~x+1;
-  // int diff = y + negX;
-  // // int ans = !(((dif>>31))|(!dif));
-  // int ans = ((((diff>>31))|(!diff)))^!(x^(1<<31));
-  // return ans;
-
-  // int dif = x + ~y+1;
-  // int ans = !(((dif>>31))|(!dif));
-  // int k = x+y;
-  // return ans^k;
-  
-
+int isGreater(int x, int y)
+{
+  // int invy = ~y;
+  // int pn = x | invy; // 0
+  // int np = x & invy; // 1
+  // return !((np | ((pn) & (x + invy))) >> 31);
+  return (((x + ~(((x ^ y) >> 31) | y))) >> 31) + 1;
 }
-/* 
+/*
  * logicalShift - shift x to the right by n, using a logical shift
  *   Can assume that 0 <= n <= 31
  *   Examples: logicalShift(0x87654321,4) = 0x08765432
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 20
- *   Rating: 3 
+ *   Rating: 3
  */
-int logicalShift(int x, int n) {
-    int aShift = x>>n;
-  int sign = x>>31;
-  int mask = sign<<31>>(n+~0);
-  return aShift^mask;
+int logicalShift(int x, int n)
+{
+  // int aShift = x >> n;
+  // int sign = x >> 31;
+  // int mask = sign << 31 >> n << 1; //多次移位取代先操作后移位
+  // return aShift ^ mask;
+  int maskbit = 1 << (31 ^ n);
+  return ((x >> n) + maskbit) ^ maskbit;
 }
 /*
  * satMul2 - multiplies by 2, saturating to Tmin or Tmax if overflow
@@ -390,22 +387,38 @@ int logicalShift(int x, int n) {
  *             satMul2(0x40000000) = 0x7FFFFFFF (saturate to TMax)
  *             satMul2(0x60000000) = 0x80000000 (saturate to TMin)
  *   Legal ops: ! ~ & ^ | + << >>
- *   Max ops: 20
+ *   Max ops: 20 6
  *   Rating: 3
  */
-int satMul2(int x) {
-  return 2;
+int satMul2(int x)
+{
+  // int tmin = 1 << 31; // 0x80000000
+
+  // int x2 = x << 1;           // 2*x
+  // int flow = (x ^ x2) >> 31; // all1
+
+  // int brush_x2 = x2 | flow; //若flow了，brush to all1
+  // int xneg = x >> 31;
+  // return (brush_x2) ^ (flow & (tmin ^ (xneg)));
+  int mul2 = x << 1;
+  int mask = (x ^ mul2) >> 31;
+  return ((mask << mask) + (mul2 >> mask));
 }
-/* 
+/*
  * subOK - Determine if can compute x-y without overflow
  *   Example: subOK(0x80000000,0x80000000) = 1,
- *            subOK(0x80000000,0x70000000) = 0, 
+ *            subOK(0x80000000,0x70000000) = 0,
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 20
  *   Rating: 3
  */
-int subOK(int x, int y) {
-  return 2;
+
+int subOK(int x, int y)
+{
+  //当x>0 y<0 x-y<0或x<0 y>0 x-y>0时flow
+  // x-y=>-(y-x) 即~(y+~x)，取(y+~x)与y^,x和y异号的前提下, y和(y-x)符号相同即x和(x-y)符号相反
+  int dif = y + ~x;
+  return !(((x ^ y) & (y ^ dif)) >> 31);
 }
 /*
  * trueThreeFourths - multiplies by 3/4 rounding toward 0,
@@ -419,7 +432,17 @@ int subOK(int x, int y) {
  */
 int trueThreeFourths(int x)
 {
-  return 2;
+  int xdiv4 = x >> 2;
+  int rem = x & 0x3;
+
+  int xmul3div4 = (xdiv4 << 1) + xdiv4;
+
+  int rem3 = (rem << 1) + rem;
+
+  int xneg = x >> 31;
+  int left = (rem3 + (xneg & 0x3)) >> 2;
+
+  return xmul3div4 + left;
 }
 /*
  * isPower2 - returns 1 if x is a power of 2, and 0 otherwise
@@ -429,10 +452,15 @@ int trueThreeFourths(int x)
  *   Max ops: 20
  *   Rating: 4
  */
-int isPower2(int x) {
-  return 2;
+int isPower2(int x)
+{
+  // int y = x + ~0;
+  // return !((x & y) | ((x|y) >> 31));
+  int y = x + ~0;
+  return !((x & y) | (y >> 30));
 }
-/* 
+
+/*
  * float_i2f - Return bit-level equivalent of expression (float) x
  *   Result is returned as unsigned int, but
  *   it is to be interpreted as the bit-level representation of a
@@ -441,8 +469,32 @@ int isPower2(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
-unsigned float_i2f(int x) {
-  return 2;
+unsigned float_i2f(int x)
+{
+  unsigned sign = 0, shift = 159, bias = 0, tmp;
+  unsigned absx = x;
+  if (x == 0)
+    return 0;
+  if (x < 0)
+  {
+    sign = 0x80000000;
+    absx = -x;
+  }
+  while (1)
+  {
+    tmp = absx;
+    absx <<= 1;
+    shift--;
+
+    if (tmp & 0x80000000)
+      break;
+  }
+  if ((absx & 0x01ff) > 0x0100)
+    bias = 1; //向上舍入
+  if ((absx & 0x03ff) == 0x0300)
+    bias = 1; //需要向偶数舍入
+
+  return sign + (absx >> 9) + ((shift) << 23) + bias;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -456,10 +508,22 @@ unsigned float_i2f(int x) {
  *  Max ops: 90
  *  Rating: 4
  */
-int howManyBits(int x) {
-  return 0;
+int howManyBits(int x)
+{
+  int b16, b8, b4, b2, b1;
+  x ^= (x << 1);
+  b16 = ((!!(x >> 16)) << 4);
+  x >>= b16;
+  b8 = (!!(x >> 8)) << 3;
+  x >>= b8;
+  b4 = (!!(x >> 4)) << 2;
+  x >>= b4;
+  b2 = ((!!(x >> 2)) << 1) + 1;
+  x >>= b2;
+  b1 = x & 1;
+  return b16 + b8 + b4 + b2 + b1;
 }
-/* 
+/*
  * float_half - Return bit-level equivalent of expression 0.5*f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -470,6 +534,28 @@ int howManyBits(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
-unsigned float_half(unsigned uf) {
-  return 2;
+unsigned float_half(unsigned uf)
+{
+  unsigned NaN = 0x7f800000;
+  unsigned sign = (uf & 0x80000000);
+  unsigned absuf = uf - sign;
+  unsigned shift;
+  unsigned round = (absuf & 3) == 3;
+  int add;
+  if (absuf >= NaN)
+  {
+    shift = 0;
+    add = 0;
+  }
+  else if (absuf >= 0x900000)
+  {
+    shift = 0;
+    add = -0x800000;
+  }
+  else
+  {
+    shift = 1;
+    add = round;
+  }
+  return sign + (absuf >> shift) + add;
 }
