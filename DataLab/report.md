@@ -2,7 +2,7 @@
 
 ## all pass!(22/22)
 
-![pass](/datalabscore.png)
+![pass](./datalabscore.png)
 
 ## Problem1 bitXor
 
@@ -402,17 +402,20 @@ int trueThreeFourths(int x)
 9op
 
 way1
+
 ```c
 int trueThreeFourths(int x)
 {
- 	int mod=x&0x3;
-	int t=x>>2;
-	int s=x>>1;
-	int sign=x>>31;
-	return t+s+((mod+1)>>(sign+2));
+     int mod=x&0x3;
+    int t=x>>2;
+    int s=x>>1;
+    int sign=x>>31;
+    return t+s+((mod+1)>>(sign+2));
 }
 ```
+
 way2
+
 ```c
 int trueThreeFourths(int x)
 {
